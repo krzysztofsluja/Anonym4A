@@ -1,5 +1,7 @@
 package com.sluja.anonym4ai.anonymization;
 
-public abstract class AbstractUnifiedCodeAnonymizer<T> extends AbstractCodeAnonymizer<T, T>{
+import com.github.javaparser.ast.Node;
+
+public abstract class AbstractUnifiedCodeAnonymizer<T extends Node> extends AbstractCodeAnonymizer<T, T>{
 
 }

@@ -34,9 +34,5 @@ public class StatementCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<State
     protected void registerVisitorHandlers(final AnonymizingVisitor visitor) {
         visitor.registerHandler(BlockStmt.class, this::anonymizeStatement);
     }
-
-    @Override
-    public Statement parse(final String code) {
-        return StaticJavaParser.parseStatement(code);
-    }
+    
 }

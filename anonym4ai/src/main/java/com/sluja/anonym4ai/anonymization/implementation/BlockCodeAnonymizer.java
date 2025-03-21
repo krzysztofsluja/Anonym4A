@@ -7,7 +7,6 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.sluja.anonym4ai.anonymization.AbstractUnifiedCodeAnonymizer;
@@ -43,11 +42,6 @@ public class BlockCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<BlockStmt
     @Override
     protected void registerVisitorHandlers(final AnonymizingVisitor visitor) {
         visitor.registerHandler(BlockStmt.class, this::anonymizeBlock);
-    }
-
-    @Override
-    public BlockStmt parse(final String code) throws ParseProblemException {
-        return StaticJavaParser.parseBlock(code);
     }
 
 }

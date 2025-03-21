@@ -70,9 +70,4 @@ public class CompilationUnitCodeAnonymizer extends AbstractUnifiedCodeAnonymizer
         visitor.registerHandler(CompilationUnit.class, this::anonymizeCompilationUnit);
     }
 
-    @Override
-    public CompilationUnit parse(final String code) throws ParseProblemException {
-        return StaticJavaParser.parse(code);
-    }
-
 }

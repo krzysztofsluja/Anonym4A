@@ -1,7 +1,5 @@
 package com.sluja.anonym4ai.anonymization.implementation;
 
-import com.github.javaparser.ParseProblemException;
-import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.sluja.anonym4ai.anonymization.AbstractCodeAnonymizer;
@@ -27,11 +25,6 @@ public class ClassCodeAnonymizer extends AbstractCodeAnonymizer<ClassOrInterface
     @Override
     protected void registerVisitorHandlers(final AnonymizingVisitor blockVisitor) {
         blockVisitor.registerHandler(ClassOrInterfaceDeclaration.class, this::anonymizeClass);
-    }
-
-    @Override
-    public ClassOrInterfaceType parse(final String code) throws ParseProblemException {
-        return StaticJavaParser.parseClassOrInterfaceType(code);
     }
 
 }

@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import com.github.javaparser.ParseProblemException;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.sluja.anonym4ai.context.UserSettingsConfiguration;
 
-public abstract class AbstractCodeAnonymizer<T, K> {
+public abstract class AbstractCodeAnonymizer<T, K extends Node> {
 
     final protected UserSettingsConfiguration userSettingsConfiguration;
 
@@ -21,7 +21,6 @@ public abstract class AbstractCodeAnonymizer<T, K> {
 
     protected abstract String anonymize(final T code);
     protected abstract void registerVisitorHandlers(AnonymizingVisitor visitor);
-    public abstract K parse(final String code) throws ParseProblemException;
 
     protected String getSetting(final String key) {
         return userSettingsConfiguration.getSetting(key);

@@ -1,7 +1,5 @@
 package com.sluja.anonym4ai.anonymization.implementation;
 
-import com.github.javaparser.ParseProblemException;
-import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.sluja.anonym4ai.anonymization.AbstractUnifiedCodeAnonymizer;
@@ -44,10 +42,5 @@ public class MethodCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<MethodDe
     @Override
     protected void registerVisitorHandlers(final AnonymizingVisitor visitor) {
         visitor.registerHandler(MethodDeclaration.class, this::anonymizeMethod);
-    }
-
-    @Override
-    public MethodDeclaration parse(final String code) throws ParseProblemException {
-        return StaticJavaParser.parseMethodDeclaration(code);
     }
 }
