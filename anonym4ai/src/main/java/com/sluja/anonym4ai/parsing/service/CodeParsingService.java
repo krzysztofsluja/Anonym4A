@@ -14,6 +14,7 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.sluja.anonym4ai.enums.CodeParsingOrderElement;
+import com.sluja.anonym4ai.exception.ExceptionWithErrorCodeAndMessageCode;
 import com.sluja.anonym4ai.parsing.exception.CodeParsingStrategyNotFoundException;
 import com.sluja.anonym4ai.parsing.implementation.BlockCodeParser;
 import com.sluja.anonym4ai.parsing.implementation.ClassCodeParser;
@@ -58,8 +59,7 @@ public class CodeParsingService {
                        new CodeParsingStrategy<>(CodeParsingOrderElement.STATEMENT, statementCodeParser::parse));
     }
 
-    private <T extends Node> T parse(final String code, final CodeParsingOrderIndicator indicator) throws IllegalArgumentException, ParseProblemException {
-        //TODO throw exception if codeType is not found
+    private <T extends Node> T parse(final String code, final CodeParsingOrderIndicator indicator) throws ExceptionWithErrorCodeAndMessageCode {
         try {
             return Optional.ofNullable((CodeParsingStrategy<T>) strategies.get(indicator.getCurrentLevel()))
                         .map(strategy -> strategy.getParseFunction().apply(code))
@@ -67,16 +67,12 @@ public class CodeParsingService {
         } catch (final ParseProblemException e) {
             //TODO log
             return parse(code, indicator.nextLevel());
-        } catch (final CodeParsingStrategyNotFoundException e) {
-            //TODO log
         }
-        return null;
     }
 
-    public Node parse(final String code) {
+    public Node parse(final String code) throws ExceptionWithErrorCodeAndMessageCode{
         return parse(code, new CodeParsingOrderIndicator());
     }
-    
 
     @AllArgsConstructor
     private class CodeParsingStrategy<T extends Node> {
@@ -103,9 +99,9 @@ public class CodeParsingService {
            return Objects.nonNull(currentLevel) && order.indexOf(currentLevel) == order.size() - 1;
         }
 
-        public CodeParsingOrderIndicator nextLevel() {
+        public CodeParsingOrderIndicator nextLevel() throws CodeParsingStrategyNotFoundException{
             if(reachedEnd()) {
-                //TODO: throw exception
+                throw new CodeParsingStrategyNotFoundException();
             }
             this.currentLevel = order.get(order.indexOf(currentLevel) + 1);
             return this;
