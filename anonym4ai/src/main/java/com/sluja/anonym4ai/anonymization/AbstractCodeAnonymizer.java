@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
@@ -20,6 +22,7 @@ public abstract class AbstractCodeAnonymizer<T, K extends Node> {
     }
 
     public abstract String anonymize(final T code);
+
     protected abstract void registerVisitorHandlers(AnonymizingVisitor visitor);
 
     protected String getSetting(final String key) {
@@ -27,9 +30,9 @@ public abstract class AbstractCodeAnonymizer<T, K extends Node> {
     }
 
     public class AnonymizingVisitor extends VoidVisitorAdapter<Void> {
-        
+
         private final Map<Class<?>, BiConsumer<Object, Void>> handlers = new HashMap<>();
-        
+
         public <N> void registerHandler(Class<N> nodeClass, BiConsumer<N, Void> handler) {
             handlers.put(nodeClass, (BiConsumer<Object, Void>) handler);
         }
@@ -46,18 +49,30 @@ public abstract class AbstractCodeAnonymizer<T, K extends Node> {
             executeAnonymization(ClassOrInterfaceDeclaration.class, n, arg);
             super.visit(n, arg);
         }
-        
+
         @Override
         public void visit(final MethodDeclaration n, Void arg) {
             executeAnonymization(MethodDeclaration.class, n, arg);
             super.visit(n, arg);
         }
-        
+
         @Override
         public void visit(final VariableDeclarator n, Void arg) {
             executeAnonymization(VariableDeclarator.class, n, arg);
             super.visit(n, arg);
         }
-        
+
+        @Override
+        public void visit(final CompilationUnit n, Void arg) {
+            executeAnonymization(CompilationUnit.class, n, arg);
+            super.visit(n, arg);
+        }
+
+        @Override
+        public void visit(final EnumDeclaration n, Void arg) {
+            executeAnonymization(EnumDeclaration.class, n, arg);
+            super.visit(n, arg);
+        }
+
     }
 }
