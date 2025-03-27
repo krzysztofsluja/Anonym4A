@@ -2,8 +2,6 @@ package com.sluja.anonym4ai.anonymization.implementation;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.github.javaparser.ParseProblemException;
-import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -32,11 +30,11 @@ public class CompilationUnitCodeAnonymizer extends AbstractUnifiedCodeAnonymizer
     }
 
     @Override
-    protected String anonymize(CompilationUnit code) {
+    public String anonymize(CompilationUnit code) {
         final AnonymizingVisitor visitor = new AnonymizingVisitor();
         registerVisitorHandlers(visitor);
         visitor.visit(code, null);
-        return StringUtils.EMPTY;
+        return code.toString();
     }
 
     private void anonymizeCompilationUnit(final CompilationUnit code, final Void arg) {
@@ -46,19 +44,19 @@ public class CompilationUnitCodeAnonymizer extends AbstractUnifiedCodeAnonymizer
         code.accept(new VoidVisitorAdapter<Void>() {
             @Override
             public void visit(final ClassOrInterfaceDeclaration n, final Void arg) {
-                new ClassCodeAnonymizer().anonymize(n);
+                classAnonymizer.anonymize(n);
                 super.visit(n, arg);
             }
             
             @Override
             public void visit(final MethodDeclaration n, final Void arg) {
-                new MethodCodeAnonymizer().anonymize(n);
+                methodAnonymizer.anonymize(n);
                 super.visit(n, arg);
             }
 
             @Override
             public void visit(final BlockStmt n, final Void arg) {
-                new BlockCodeAnonymizer().anonymize(n);
+                blockCodeAnonymizer.anonymize(n);
                 super.visit(n, arg);
             }
             

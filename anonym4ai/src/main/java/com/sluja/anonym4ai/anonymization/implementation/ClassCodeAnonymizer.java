@@ -9,11 +9,11 @@ public class ClassCodeAnonymizer extends AbstractCodeAnonymizer<ClassOrInterface
     private int classCounter = 1;
 
     @Override
-    protected String anonymize(final ClassOrInterfaceDeclaration code) {
+    public String anonymize(final ClassOrInterfaceDeclaration code) {
         final AnonymizingVisitor visitor = new AnonymizingVisitor();
         registerVisitorHandlers(visitor);
         visitor.visit(code, null);
-        return code.getNameAsString();
+        return code.toString();
     }
 
     private void anonymizeClass(final ClassOrInterfaceDeclaration code, final Void arg) {

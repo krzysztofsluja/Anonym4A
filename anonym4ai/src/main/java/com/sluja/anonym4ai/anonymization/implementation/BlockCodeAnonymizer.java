@@ -14,11 +14,11 @@ import com.sluja.anonym4ai.anonymization.AbstractUnifiedCodeAnonymizer;
 public class BlockCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<BlockStmt> {
 
     @Override
-    protected String anonymize(BlockStmt code) {
+    public String anonymize(final BlockStmt code) {
         final AnonymizingVisitor visitor = new AnonymizingVisitor();
         registerVisitorHandlers(visitor);
         visitor.visit(code, null);
-        return StringUtils.EMPTY; 
+        return code.toString(); 
     }
 
     private void anonymizeBlock(final BlockStmt code, final Void arg) {

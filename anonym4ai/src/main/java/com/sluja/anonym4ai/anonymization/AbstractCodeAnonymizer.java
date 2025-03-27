@@ -19,7 +19,7 @@ public abstract class AbstractCodeAnonymizer<T, K extends Node> {
         userSettingsConfiguration = UserSettingsConfiguration.getInstance();
     }
 
-    protected abstract String anonymize(final T code);
+    public abstract String anonymize(final T code);
     protected abstract void registerVisitorHandlers(AnonymizingVisitor visitor);
 
     protected String getSetting(final String key) {
