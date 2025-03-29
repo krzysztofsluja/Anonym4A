@@ -8,7 +8,7 @@ import com.sluja.anonym4ai.parsing.interfaces.ICodeParser;
 public class StatementCodeParser implements ICodeParser<Statement> {
 
     @Override
-    public Statement parse(final String code) throws ParseProblemException{
+    public Statement parse(final String code) throws ParseProblemException {
         return StaticJavaParser.parseStatement(code);
     }
 }
