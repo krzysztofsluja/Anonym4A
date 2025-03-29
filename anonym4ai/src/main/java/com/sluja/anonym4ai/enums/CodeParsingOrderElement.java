@@ -6,5 +6,6 @@ public enum CodeParsingOrderElement {
     CLASS,
     METHOD,
     BLOCK,
-    STATEMENT;
+    STATEMENT,
+    FIELD;
 }
