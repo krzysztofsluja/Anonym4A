@@ -3,17 +3,23 @@ package com.sluja.anonym4ai.anonymization.implementation;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.sluja.anonym4ai.anonymization.AbstractCodeAnonymizer;
 import com.sluja.anonym4ai.anonymization.AbstractUnifiedCodeAnonymizer;
+import com.sluja.anonym4ai.anonymization.interfaces.ICounterReset;
+import com.sluja.anonym4ai.anonymization.utils.AnonymizingVisitor;
 
-public class EnumCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<EnumDeclaration> {
+public class EnumCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<EnumDeclaration> implements ICounterReset {
 
-    private static int enumCounter = 1;
-    private static int enumConstantCounter = 1;
+    private int enumCounter = 1;
+    private int enumConstantCounter = 1;
+
+    public EnumCodeAnonymizer(final AnonymizingVisitor visitor) {
+        super(visitor);
+        registerVisitorHandlers(visitor);
+    }
 
     @Override
     public String anonymize(EnumDeclaration code) {
-        final AnonymizingVisitor visitor = new AnonymizingVisitor();
-        registerVisitorHandlers(visitor);
         visitor.visit(code, null);
+        resetCounters();
         return code.toString();
     }
 
@@ -43,9 +49,14 @@ public class EnumCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<EnumDeclar
     }
 
     @Override
-    protected void registerVisitorHandlers(
-            AbstractCodeAnonymizer<EnumDeclaration, EnumDeclaration>.AnonymizingVisitor visitor) {
+    protected void registerVisitorHandlers(AnonymizingVisitor visitor) {
         visitor.registerHandler(EnumDeclaration.class, this::anonymizeEnumDeclaration);
+    }
+
+    @Override
+    public void resetCounters() {
+        this.enumCounter = 1;
+        this.enumConstantCounter = 1;
     }
 
 }

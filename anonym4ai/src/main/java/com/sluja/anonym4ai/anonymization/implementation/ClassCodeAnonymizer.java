@@ -3,16 +3,23 @@ package com.sluja.anonym4ai.anonymization.implementation;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.sluja.anonym4ai.anonymization.AbstractCodeAnonymizer;
+import com.sluja.anonym4ai.anonymization.interfaces.ICounterReset;
+import com.sluja.anonym4ai.anonymization.utils.AnonymizingVisitor;
 
-public class ClassCodeAnonymizer extends AbstractCodeAnonymizer<ClassOrInterfaceDeclaration, ClassOrInterfaceType> {
+public class ClassCodeAnonymizer extends AbstractCodeAnonymizer<ClassOrInterfaceDeclaration, ClassOrInterfaceType>
+        implements ICounterReset {
 
     private int classCounter = 1;
 
+    public ClassCodeAnonymizer(final AnonymizingVisitor visitor) {
+        super(visitor);
+        registerVisitorHandlers(visitor);
+    }
+
     @Override
     public String anonymize(final ClassOrInterfaceDeclaration code) {
-        final AnonymizingVisitor visitor = new AnonymizingVisitor();
-        registerVisitorHandlers(visitor);
         visitor.visit(code, null);
+        resetCounters();
         return code.toString();
     }
 
@@ -25,6 +32,11 @@ public class ClassCodeAnonymizer extends AbstractCodeAnonymizer<ClassOrInterface
     @Override
     protected void registerVisitorHandlers(final AnonymizingVisitor blockVisitor) {
         blockVisitor.registerHandler(ClassOrInterfaceDeclaration.class, this::anonymizeClass);
+    }
+
+    @Override
+    public void resetCounters() {
+        this.classCounter = 1;
     }
 
 }

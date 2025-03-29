@@ -5,28 +5,34 @@ import org.apache.commons.lang3.StringUtils;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.comments.Comment;
+import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.sluja.anonym4ai.anonymization.AbstractCodeAnonymizer;
 import com.sluja.anonym4ai.anonymization.AbstractUnifiedCodeAnonymizer;
+import com.sluja.anonym4ai.anonymization.utils.AnonymizingVisitor;
 
 public class CompilationUnitCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<CompilationUnit> {
 
     private AbstractCodeAnonymizer<ClassOrInterfaceDeclaration, ClassOrInterfaceType> classAnonymizer;
     private AbstractUnifiedCodeAnonymizer<MethodDeclaration> methodAnonymizer;
     private AbstractUnifiedCodeAnonymizer<BlockStmt> blockCodeAnonymizer;
-    private AbstractUnifiedCodeAnonymizer<Statement> statementCodeAnonymizer;
-    //private AbstractUnifiedCodeAnonymizer<Statement> statementCodeAnonymizer;
+    // private AbstractUnifiedCodeAnonymizer<SimpleName> statementCodeAnonymizer;
+    private AbstractUnifiedCodeAnonymizer<EnumDeclaration> enumCodeAnonymizer;
+    // private AbstractUnifiedCodeAnonymizer<Statement> statementCodeAnonymizer;
 
-    public CompilationUnitCodeAnonymizer() {
-        classAnonymizer = new ClassCodeAnonymizer();
-        methodAnonymizer = new MethodCodeAnonymizer();
-        blockCodeAnonymizer = new BlockCodeAnonymizer();
-        statementCodeAnonymizer = new StatementCodeAnonymizer();
+    public CompilationUnitCodeAnonymizer(final AnonymizingVisitor visitor) {
+        super(visitor);
+        classAnonymizer = new ClassCodeAnonymizer(visitor);
+        methodAnonymizer = new MethodCodeAnonymizer(visitor);
+        blockCodeAnonymizer = new BlockCodeAnonymizer(visitor);
+        // statementCodeAnonymizer = new StatementCodeAnonymizer(visitor);
+        enumCodeAnonymizer = new EnumCodeAnonymizer(visitor);
     }
 
     @Override
@@ -47,7 +53,7 @@ public class CompilationUnitCodeAnonymizer extends AbstractUnifiedCodeAnonymizer
                 classAnonymizer.anonymize(n);
                 super.visit(n, arg);
             }
-            
+
             @Override
             public void visit(final MethodDeclaration n, final Void arg) {
                 methodAnonymizer.anonymize(n);
@@ -59,12 +65,18 @@ public class CompilationUnitCodeAnonymizer extends AbstractUnifiedCodeAnonymizer
                 blockCodeAnonymizer.anonymize(n);
                 super.visit(n, arg);
             }
-            
+
+            @Override
+            public void visit(final EnumDeclaration n, final Void arg) {
+                enumCodeAnonymizer.anonymize(n);
+                super.visit(n, arg);
+            }
+
         }, arg);
     }
 
     @Override
-    protected void registerVisitorHandlers(final AbstractCodeAnonymizer<CompilationUnit, CompilationUnit>.AnonymizingVisitor visitor) {
+    protected void registerVisitorHandlers(final AnonymizingVisitor visitor) {
         visitor.registerHandler(CompilationUnit.class, this::anonymizeCompilationUnit);
     }
 

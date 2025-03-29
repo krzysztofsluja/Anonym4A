@@ -4,11 +4,13 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.sluja.anonym4ai.anonymization.AbstractUnifiedCodeAnonymizer;
+import com.sluja.anonym4ai.anonymization.interfaces.ICounterReset;
+import com.sluja.anonym4ai.anonymization.utils.AnonymizingVisitor;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-public class MethodCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<MethodDeclaration> {
+public class MethodCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<MethodDeclaration> implements ICounterReset {
 
     private int methodCounter = 1;
     private int parameterCounter = 1;
@@ -19,15 +21,20 @@ public class MethodCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<MethodDe
         CONSTRUCTOR("constructor.parameter.name"),
         CLASS_METHOD("method.parameter.name"),
         STATIC("static.parameter.name");
+
         private final String anonymizationParameterName;
-    
+
+    }
+
+    public MethodCodeAnonymizer(final AnonymizingVisitor visitor) {
+        super(visitor);
+        registerVisitorHandlers(visitor);
     }
 
     @Override
     public String anonymize(final MethodDeclaration code) {
-        final AnonymizingVisitor visitor = new AnonymizingVisitor();
-        registerVisitorHandlers(visitor);
         visitor.visit(code, null);
+        resetCounters();
         return code.toString();
     }
 
@@ -38,21 +45,21 @@ public class MethodCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<MethodDe
             code.setName(anonymizedName);
             code.setParameters(anonymizeMethodParameters(code, ParameterOption.CLASS_METHOD));
             code.getBody().ifPresent(body -> {
-                BlockCodeAnonymizer blockAnonymizer = new BlockCodeAnonymizer();
-                blockAnonymizer.anonymize(body);
+                visitor.visit(body, arg);
             });
         } else {
             anonymizeMethodParameters(code, ParameterOption.CONSTRUCTOR);
         }
     }
 
-    private NodeList<Parameter> anonymizeMethodParameters(final MethodDeclaration code, final ParameterOption methodType) {
+    private NodeList<Parameter> anonymizeMethodParameters(final MethodDeclaration code,
+            final ParameterOption methodType) {
         return new NodeList<>(code.getParameters()
-                    .stream()
-                    .map(parameter -> anonymizeParameter(parameter, methodType))
-                    .toList());
+                .stream()
+                .map(parameter -> anonymizeParameter(parameter, methodType))
+                .toList());
     }
-    
+
     private Parameter anonymizeParameter(final Parameter parameter, final ParameterOption methodType) {
         final String originalName = parameter.getNameAsString();
         final String parameterPrefix = userSettingsConfiguration.getSetting(methodType.getAnonymizationParameterName());
@@ -64,5 +71,11 @@ public class MethodCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<MethodDe
     @Override
     protected void registerVisitorHandlers(final AnonymizingVisitor visitor) {
         visitor.registerHandler(MethodDeclaration.class, this::anonymizeMethod);
+    }
+
+    @Override
+    public void resetCounters() {
+        this.methodCounter = 1;
+        this.parameterCounter = 1;
     }
 }
