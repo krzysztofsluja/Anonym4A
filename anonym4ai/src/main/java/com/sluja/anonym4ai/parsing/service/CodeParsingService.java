@@ -1,5 +1,6 @@
 package com.sluja.anonym4ai.parsing.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -9,6 +10,7 @@ import java.util.function.Function;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
@@ -19,6 +21,7 @@ import com.sluja.anonym4ai.parsing.exception.CodeParsingStrategyNotFoundExceptio
 import com.sluja.anonym4ai.parsing.implementation.BlockCodeParser;
 import com.sluja.anonym4ai.parsing.implementation.ClassCodeParser;
 import com.sluja.anonym4ai.parsing.implementation.CompilationUnitCodeParser;
+import com.sluja.anonym4ai.parsing.implementation.FieldCodeParser;
 import com.sluja.anonym4ai.parsing.implementation.MethodCodeParser;
 import com.sluja.anonym4ai.parsing.implementation.StatementCodeParser;
 import com.sluja.anonym4ai.parsing.interfaces.ICodeParser;
@@ -33,8 +36,8 @@ public class CodeParsingService {
     private final ICodeParser<CompilationUnit> compilationUnitCodeParser;
     private final ICodeParser<MethodDeclaration> methodCodeParser;
     private final ICodeParser<Statement> statementCodeParser;
+    private final ICodeParser<FieldDeclaration> fieldCodeParser;
     private final Map<CodeParsingOrderElement, CodeParsingStrategy<? extends Node>> strategies;
-
 
     public CodeParsingService() {
         classCodeParser = (ICodeParser<ClassOrInterfaceType>) new ClassCodeParser();
@@ -42,35 +45,39 @@ public class CodeParsingService {
         compilationUnitCodeParser = (ICodeParser<CompilationUnit>) new CompilationUnitCodeParser();
         methodCodeParser = (ICodeParser<MethodDeclaration>) new MethodCodeParser();
         statementCodeParser = (ICodeParser<Statement>) new StatementCodeParser();
+        fieldCodeParser = (ICodeParser<FieldDeclaration>) new FieldCodeParser();
         this.strategies = initializeStrategies();
     }
-    
+
     private Map<CodeParsingOrderElement, CodeParsingStrategy<? extends Node>> initializeStrategies() {
         return Map.of(
-        CodeParsingOrderElement.COMPILATION_UNIT, 
-                       new CodeParsingStrategy<>(CodeParsingOrderElement.COMPILATION_UNIT, compilationUnitCodeParser::parse),
-        CodeParsingOrderElement.CLASS, 
-                       new CodeParsingStrategy<>(CodeParsingOrderElement.CLASS, classCodeParser::parse),
-        CodeParsingOrderElement.METHOD, 
-                       new CodeParsingStrategy<>(CodeParsingOrderElement.METHOD, methodCodeParser::parse),
-        CodeParsingOrderElement.BLOCK, 
-                       new CodeParsingStrategy<>(CodeParsingOrderElement.BLOCK, blockCodeParser::parse),
-        CodeParsingOrderElement.STATEMENT, 
-                       new CodeParsingStrategy<>(CodeParsingOrderElement.STATEMENT, statementCodeParser::parse));
+                CodeParsingOrderElement.COMPILATION_UNIT,
+                new CodeParsingStrategy<>(CodeParsingOrderElement.COMPILATION_UNIT, compilationUnitCodeParser::parse),
+                CodeParsingOrderElement.CLASS,
+                new CodeParsingStrategy<>(CodeParsingOrderElement.CLASS, classCodeParser::parse),
+                CodeParsingOrderElement.METHOD,
+                new CodeParsingStrategy<>(CodeParsingOrderElement.METHOD, methodCodeParser::parse),
+                CodeParsingOrderElement.BLOCK,
+                new CodeParsingStrategy<>(CodeParsingOrderElement.BLOCK, blockCodeParser::parse),
+                CodeParsingOrderElement.STATEMENT,
+                new CodeParsingStrategy<>(CodeParsingOrderElement.STATEMENT, statementCodeParser::parse),
+                CodeParsingOrderElement.FIELD,
+                new CodeParsingStrategy<>(CodeParsingOrderElement.FIELD, fieldCodeParser::parse));
     }
 
-    private <T extends Node> T parse(final String code, final CodeParsingOrderIndicator indicator) throws ExceptionWithErrorCodeAndMessageCode {
+    private <T extends Node> T parse(final String code, final CodeParsingOrderIndicator indicator)
+            throws ExceptionWithErrorCodeAndMessageCode {
         try {
             return Optional.ofNullable((CodeParsingStrategy<T>) strategies.get(indicator.getCurrentLevel()))
-                        .map(strategy -> strategy.getParseFunction().apply(code))
-                        .orElseThrow(() -> new CodeParsingStrategyNotFoundException(indicator.getCurrentLevel()));
+                    .map(strategy -> strategy.getParseFunction().apply(code))
+                    .orElseThrow(() -> new CodeParsingStrategyNotFoundException(indicator.getCurrentLevel()));
         } catch (final ParseProblemException e) {
-            //TODO log
+            // TODO log
             return parse(code, indicator.nextLevel());
         }
     }
 
-    public Node parse(final String code) throws ExceptionWithErrorCodeAndMessageCode{
+    public Node parse(final String code) throws ExceptionWithErrorCodeAndMessageCode {
         return parse(code, new CodeParsingOrderIndicator());
     }
 
@@ -88,19 +95,20 @@ public class CodeParsingService {
 
         public CodeParsingOrderIndicator() {
             this.currentLevel = CodeParsingOrderElement.COMPILATION_UNIT;
-            this.order = List.of(CodeParsingOrderElement.COMPILATION_UNIT, 
-                                 CodeParsingOrderElement.CLASS, 
-                                 CodeParsingOrderElement.METHOD, 
-                                 CodeParsingOrderElement.BLOCK, 
-                                 CodeParsingOrderElement.STATEMENT);
+            this.order = List.of(CodeParsingOrderElement.COMPILATION_UNIT,
+                    CodeParsingOrderElement.CLASS,
+                    CodeParsingOrderElement.METHOD,
+                    CodeParsingOrderElement.BLOCK,
+                    CodeParsingOrderElement.STATEMENT,
+                    CodeParsingOrderElement.FIELD);
         }
 
         private boolean reachedEnd() {
-           return Objects.nonNull(currentLevel) && order.indexOf(currentLevel) == order.size() - 1;
+            return Objects.nonNull(currentLevel) && order.indexOf(currentLevel) == order.size() - 1;
         }
 
-        public CodeParsingOrderIndicator nextLevel() throws CodeParsingStrategyNotFoundException{
-            if(reachedEnd()) {
+        public CodeParsingOrderIndicator nextLevel() throws CodeParsingStrategyNotFoundException {
+            if (reachedEnd()) {
                 throw new CodeParsingStrategyNotFoundException();
             }
             this.currentLevel = order.get(order.indexOf(currentLevel) + 1);
