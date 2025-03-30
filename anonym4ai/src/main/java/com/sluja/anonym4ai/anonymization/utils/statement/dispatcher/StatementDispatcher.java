@@ -16,7 +16,9 @@ public class StatementDispatcher {
     private final AbstractStatementAnonymizingVisitor controlFlowVisitor;
     private final AbstractStatementAnonymizingVisitor exceptionVisitor;
 
-    public StatementDispatcher() {
+    private static StatementDispatcher instance;
+
+    private StatementDispatcher() {
         this.visitorMap = new HashMap<>();
         this.basicVisitor = new BasicStatementVisitor();
         this.controlFlowVisitor = new ControlFlowStatementVisitor();
@@ -24,13 +26,17 @@ public class StatementDispatcher {
         registerVisitors();
     }
 
+    public synchronized static StatementDispatcher getInstance() {
+        if (Objects.isNull(instance)) {
+            instance = new StatementDispatcher();
+        }
+        return instance;
+    }
+
     private void registerVisitors() {
-        basicVisitor.getHandledStatements().forEach(type -> 
-            visitorMap.put(type, basicVisitor));
-        controlFlowVisitor.getHandledStatements().forEach(type -> 
-            visitorMap.put(type, controlFlowVisitor));
-        exceptionVisitor.getHandledStatements().forEach(type -> 
-            visitorMap.put(type, exceptionVisitor));
+        basicVisitor.getHandledStatements().forEach(type -> visitorMap.put(type, basicVisitor));
+        controlFlowVisitor.getHandledStatements().forEach(type -> visitorMap.put(type, controlFlowVisitor));
+        exceptionVisitor.getHandledStatements().forEach(type -> visitorMap.put(type, exceptionVisitor));
     }
 
     public void dispatchStatement(final Statement statement) {

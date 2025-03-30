@@ -1,4 +1,4 @@
- package com.sluja.anonym4ai.anonymization.utils;
+package com.sluja.anonym4ai.anonymization.utils;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -8,6 +8,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.sluja.anonym4ai.anonymization.utils.statement.dispatcher.StatementDispatcher;
 
 public class AnonymizingVisitor extends AbstractAnonymizingVisitor {
 
@@ -56,6 +57,7 @@ public class AnonymizingVisitor extends AbstractAnonymizingVisitor {
     @Override
     public void visit(final BlockStmt n, Void arg) {
         executeAnonymization(BlockStmt.class, n, arg);
+        n.getStatements().forEach(statement -> StatementDispatcher.getInstance().dispatchStatement(statement));
         super.visit(n, arg);
     }
 
