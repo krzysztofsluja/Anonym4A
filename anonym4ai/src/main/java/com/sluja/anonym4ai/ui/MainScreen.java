@@ -4,6 +4,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -24,14 +25,14 @@ public class MainScreen extends JFrame {
 
     public MainScreen() {
         DarkTheme.apply();
-        
+        this.setIconImage(new ImageIcon(getClass().getResource("/images/icon.png")).getImage());
         initMainScreenParameters();
-        
+
         inputPanel = new CodeSnippetPanel("Original Code");
         anonymizedPanel = new CodeSnippetPanel("Anonymized Code");
         anonymizeButton = new AnonymizationActionButton(inputPanel, anonymizedPanel);
-        clearButton = new ClearActionButton(inputPanel, anonymizedPanel);    
-        buttonsPanel = new ButtonPanel(anonymizeButton, clearButton); 
+        clearButton = new ClearActionButton(inputPanel, anonymizedPanel);
+        buttonsPanel = new ButtonPanel(anonymizeButton, clearButton);
 
         configureLayout();
         this.setVisible(true);
@@ -83,4 +84,4 @@ public class MainScreen extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(MainScreen::new);
     }
-} 
+}
