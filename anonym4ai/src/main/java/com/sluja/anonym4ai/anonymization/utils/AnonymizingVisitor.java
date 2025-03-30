@@ -1,8 +1,4 @@
-package com.sluja.anonym4ai.anonymization.utils;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
+ package com.sluja.anonym4ai.anonymization.utils;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -11,25 +7,9 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.stmt.Statement;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 
-public class AnonymizingVisitor extends VoidVisitorAdapter<Void> {
-
-    private final Map<Class<?>, BiConsumer<Object, Void>> handlers = new HashMap<>();
-
-    public <N> void registerHandler(Class<N> nodeClass, BiConsumer<N, Void> handler) {
-        handlers.put(nodeClass, (BiConsumer<Object, Void>) handler);
-    }
-
-    private void executeAnonymization(final Class<?> nodeClass, final Object node, final Void arg) {
-        handlers.computeIfPresent(nodeClass, (k, v) -> {
-            v.accept(node, arg);
-            return v;
-        });
-    }
+public class AnonymizingVisitor extends AbstractAnonymizingVisitor {
 
     @Override
     public void visit(final ClassOrInterfaceDeclaration n, Void arg) {
