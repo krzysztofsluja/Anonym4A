@@ -41,8 +41,8 @@ public class StatementDispatcher {
 
     public void dispatchStatement(final Statement statement) {
         final AbstractStatementAnonymizingVisitor visitor = visitorMap.get(statement.getClass());
-        if (Objects.nonNull(visitor)) {
-            statement.accept(visitor, null);
-        }
+         if (Objects.nonNull(visitor)) {
+             statement.accept(visitor, null);
+         }
     }
 }
