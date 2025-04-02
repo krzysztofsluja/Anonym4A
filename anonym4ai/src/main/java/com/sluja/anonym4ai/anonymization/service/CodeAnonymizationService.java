@@ -10,8 +10,6 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
@@ -35,7 +33,7 @@ public class CodeAnonymizationService implements ICodeAnonymizer {
         private final AbstractCodeAnonymizer<ClassOrInterfaceDeclaration, ClassOrInterfaceType> classAnonymizer;
         private final AbstractUnifiedCodeAnonymizer<MethodDeclaration> methodAnonymizer;
         private final AbstractUnifiedCodeAnonymizer<BlockStmt> blockAnonymizer;
-        // private final AbstractUnifiedCodeAnonymizer<SimpleName> statementAnonymizer;
+        private final AbstractUnifiedCodeAnonymizer<Statement> statementAnonymizer;
         private final AbstractUnifiedCodeAnonymizer<CompilationUnit> compilationUnitCodeAnonymizer;
         private final AbstractUnifiedCodeAnonymizer<FieldDeclaration> fieldAnonymizer;
         private final CodeParsingService codeParsingService;
@@ -46,7 +44,7 @@ public class CodeAnonymizationService implements ICodeAnonymizer {
                 this.classAnonymizer = new ClassCodeAnonymizer(visitor);
                 this.methodAnonymizer = new MethodCodeAnonymizer(visitor);
                 this.blockAnonymizer = new BlockCodeAnonymizer(visitor);
-                // this.statementAnonymizer = new StatementCodeAnonymizer(visitor);
+                this.statementAnonymizer = new StatementCodeAnonymizer(visitor);
                 this.compilationUnitCodeAnonymizer = new CompilationUnitCodeAnonymizer(visitor);
                 this.codeParsingService = new CodeParsingService();
                 this.fieldAnonymizer = new FieldCodeAnonymizer(visitor);
