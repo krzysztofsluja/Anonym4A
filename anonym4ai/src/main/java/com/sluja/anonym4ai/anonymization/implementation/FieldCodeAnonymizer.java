@@ -4,6 +4,7 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.sluja.anonym4ai.anonymization.AbstractUnifiedCodeAnonymizer;
 import com.sluja.anonym4ai.anonymization.interfaces.ICounterReset;
+import com.sluja.anonym4ai.anonymization.utils.AbstractAnonymizingVisitor;
 import com.sluja.anonym4ai.anonymization.utils.AnonymizingVisitor;
 
 public class FieldCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<FieldDeclaration> implements ICounterReset {
@@ -38,7 +39,7 @@ public class FieldCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<FieldDecl
     }
 
     @Override
-    protected void registerVisitorHandlers(AnonymizingVisitor visitor) {
+    protected void registerVisitorHandlers(final AbstractAnonymizingVisitor visitor) {
         visitor.registerHandler(FieldDeclaration.class, this::anonymizeFieldDeclaration);
         visitor.registerHandler(VariableDeclarator.class, this::anonymizeVariableDeclarator);
     }

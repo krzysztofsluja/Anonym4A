@@ -1,9 +1,9 @@
 package com.sluja.anonym4ai.anonymization.implementation;
 
 import com.github.javaparser.ast.body.EnumDeclaration;
-import com.sluja.anonym4ai.anonymization.AbstractCodeAnonymizer;
 import com.sluja.anonym4ai.anonymization.AbstractUnifiedCodeAnonymizer;
 import com.sluja.anonym4ai.anonymization.interfaces.ICounterReset;
+import com.sluja.anonym4ai.anonymization.utils.AbstractAnonymizingVisitor;
 import com.sluja.anonym4ai.anonymization.utils.AnonymizingVisitor;
 
 public class EnumCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<EnumDeclaration> implements ICounterReset {
@@ -49,7 +49,7 @@ public class EnumCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<EnumDeclar
     }
 
     @Override
-    protected void registerVisitorHandlers(AnonymizingVisitor visitor) {
+    protected void registerVisitorHandlers(final AbstractAnonymizingVisitor visitor) {
         visitor.registerHandler(EnumDeclaration.class, this::anonymizeEnumDeclaration);
     }
 

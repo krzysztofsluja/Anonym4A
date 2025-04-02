@@ -5,6 +5,7 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.sluja.anonym4ai.anonymization.AbstractCodeAnonymizer;
 import com.sluja.anonym4ai.anonymization.interfaces.ICounterReset;
+import com.sluja.anonym4ai.anonymization.utils.AbstractAnonymizingVisitor;
 import com.sluja.anonym4ai.anonymization.utils.AnonymizingVisitor;
 
 public class ClassCodeAnonymizer extends AbstractCodeAnonymizer<ClassOrInterfaceDeclaration, ClassOrInterfaceType>
@@ -36,7 +37,7 @@ public class ClassCodeAnonymizer extends AbstractCodeAnonymizer<ClassOrInterface
     }
 
     @Override
-    protected void registerVisitorHandlers(final AnonymizingVisitor blockVisitor) {
+    protected void registerVisitorHandlers(final AbstractAnonymizingVisitor blockVisitor) {
         blockVisitor.registerHandler(ClassOrInterfaceDeclaration.class, this::anonymizeClass);
     }
 

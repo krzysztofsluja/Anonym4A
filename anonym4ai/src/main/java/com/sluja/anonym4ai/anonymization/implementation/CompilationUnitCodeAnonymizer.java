@@ -15,6 +15,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.sluja.anonym4ai.anonymization.AbstractCodeAnonymizer;
 import com.sluja.anonym4ai.anonymization.AbstractUnifiedCodeAnonymizer;
+import com.sluja.anonym4ai.anonymization.utils.AbstractAnonymizingVisitor;
 import com.sluja.anonym4ai.anonymization.utils.AnonymizingVisitor;
 
 public class CompilationUnitCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<CompilationUnit> {
@@ -76,7 +77,7 @@ public class CompilationUnitCodeAnonymizer extends AbstractUnifiedCodeAnonymizer
     }
 
     @Override
-    protected void registerVisitorHandlers(final AnonymizingVisitor visitor) {
+    protected void registerVisitorHandlers(final AbstractAnonymizingVisitor visitor) {
         visitor.registerHandler(CompilationUnit.class, this::anonymizeCompilationUnit);
     }
 

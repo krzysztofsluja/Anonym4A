@@ -5,6 +5,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.sluja.anonym4ai.anonymization.AbstractUnifiedCodeAnonymizer;
 import com.sluja.anonym4ai.anonymization.interfaces.ICounterReset;
+import com.sluja.anonym4ai.anonymization.utils.AbstractAnonymizingVisitor;
 import com.sluja.anonym4ai.anonymization.utils.AnonymizingVisitor;
 
 import lombok.AllArgsConstructor;
@@ -69,7 +70,7 @@ public class MethodCodeAnonymizer extends AbstractUnifiedCodeAnonymizer<MethodDe
     }
 
     @Override
-    protected void registerVisitorHandlers(final AnonymizingVisitor visitor) {
+    protected void registerVisitorHandlers(final AbstractAnonymizingVisitor visitor) {
         visitor.registerHandler(MethodDeclaration.class, this::anonymizeMethod);
     }
 
